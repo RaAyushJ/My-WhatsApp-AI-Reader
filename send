@@ -1,0 +1,21 @@
+fun sendToModel(input: String) {
+    val client = OkHttpClient()
+    val body = RequestBody.create(MediaType.parse("application/json"), 
+        "{\"input\": \"$input\"}")
+
+    val request = Request.Builder()
+        .url("http://YOUR_MODEL_ENDPOINT/api/predict")
+        .post(body)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("ModelCall", "Failed", e)
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            val output = response.body()?.string()
+            Log.d("ModelResponse", output ?: "Empty")
+        }
+    })
+}
